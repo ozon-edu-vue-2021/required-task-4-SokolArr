@@ -449,7 +449,7 @@ export default {
       //   }else return "";
       // })
 
-      this.filteredCitizenship = this.citizenshipsData.filter(el => (element === el.nationality)||(el.nationality.includes(element)))
+      this.filteredCitizenship = this.citizenshipsData.filter(el => (element.toUpperCase() === el.nationality.toUpperCase())||(el.nationality.toUpperCase().includes(element.toUpperCase())))
 
       //console.log(this.filteredCitizenship);
     },
