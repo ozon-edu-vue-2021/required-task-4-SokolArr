@@ -1,5 +1,8 @@
 <template>
-  <div class="form">
+  <form
+    class="form"
+    @submit.prevent="formSubmit"
+  >
     <div class="personal-data" style="display: flex; flex-direction: column">
       <h2>Личные данные</h2>
       <div class="string one">
@@ -11,6 +14,8 @@
             type="text"
             placeholder="Иванов"
             v-model="secondName"
+            pattern="^[А-Яа-яЁё\s]+$"
+            required
           />
         </div>
         <!--      ++++++++++++++++++++++++-->
@@ -21,6 +26,8 @@
             type="text"
             placeholder="Иван"
             v-model="firstName"
+            pattern="^[А-Яа-яЁё\s]+$"
+            required
           />
         </div>
         <!--      ++++++++++++++++++++++++-->
@@ -31,6 +38,8 @@
             type="text"
             placeholder="Иванович"
             v-model="patronymicName"
+            pattern="^[А-Яа-яЁё\s]+$"
+            required
           />
         </div>
         <!--      ++++++++++++++++++++++++-->
@@ -45,6 +54,8 @@
             class="myInput birthday"
             placeholder="дд.мм.гггг"
             v-model="birthdayText"
+            pattern="^([0-9]{0,2}).([0-9]{0,2}).([0-9]{0,4})$"
+            required
           />
         </div>
       </div>
@@ -58,6 +69,8 @@
             class="myInput email"
             placeholder="example@email.com"
             v-model="emailText"
+            type="email"
+            required
           />
         </div>
       </div>
@@ -76,15 +89,16 @@
           class="radio"
           v-model="sexText"
         />
-        <label for="radio-male" class="label-radio">Мужской</label>
+        <label for="radio-male" class="label-radio" >Мужской</label>
         <input
           type="radio"
           value="Женский"
           id="radio-female"
           class="radio"
           v-model="sexText"
+
         />
-        <label for="radio-female" class="label-radio">Женский</label>
+        <label for="radio-female" class="label-radio" >Женский</label>
       </div>
     </div>
 
@@ -99,9 +113,6 @@
         style="display: flex; flex-direction: column; width: 300px"
         v-click-outside="hideDropdownCitizenship"
       >
-        <div>
-
-        </div>
         <div
           class="dropdown-wrapper"
           @click="isDropdownCitizenshipOpen=true"
@@ -109,13 +120,13 @@
           <input
             class="myInput dropdown citizenship"
             v-model="citizenshipText"
-            @focus="isDropdownCitizenshipOpen=true"
+            @focus="isDropdownCitizenshipOpen = true"
             ref="citizenship"
             style="border: 0px; margin: 0"
             @input="inputCitizenshipHandler(citizenshipText)"
+            required
           />
           <div class="triangle"></div>
-
         </div>
 
         <div
@@ -145,6 +156,8 @@
             class="myInput passSerial"
             placeholder="1234"
             v-model="passportSerial"
+            pattern="[0-9]{4}"
+            required
           />
         </div>
         <div class="passport number">
@@ -153,6 +166,8 @@
             class="myInput passNumber"
             placeholder="567890"
             v-model="passportNumber"
+            pattern="[0-9]{6}"
+            required
           />
         </div>
         <div class="passport get-date">
@@ -161,6 +176,8 @@
             class="myInput dateGet"
             placeholder="дд.мм.гггг"
             v-model="dateGet"
+            pattern="^([0-9]{0,2}).([0-9]{0,2}).([0-9]{0,4})$"
+            required
           />
         </div>
       </div>
@@ -173,6 +190,8 @@
               class="myInput second-name-latin"
               placeholder="Ivanov"
               v-model="secondNameLatin"
+              pattern="^[a-zA-Z]+$"
+              required
             />
           </div>
           <div class="input-wrapper first-name-latin" style="width: 320px">
@@ -181,6 +200,8 @@
               class="myInput first-name-latin"
               placeholder="Ivan"
               v-model="firstNameLatin"
+              pattern="^[a-zA-Z]+$"
+              required
             />
           </div>
         </div>
@@ -191,6 +212,8 @@
               class="myInput passSerialLatin"
               placeholder=""
               v-model="passportNumberLatin"
+              pattern="^[0-9]+$"
+              required
             />
           </div>
           <div class="input-wrapper passport country-get" v-click-outside="hideDropdownCountryGet">
@@ -204,9 +227,9 @@
                 class="myInput dropdown countryGet"
                 placeholder=""
                 v-model="countryGet"
-                @focus="isDropdownCountryGetOpen=true"
+                @focus="isDropdownCountryGetOpen = true"
+                required
               />
-
               <div class="triangle"></div>
             </div>
 
@@ -243,6 +266,7 @@
                 placeholder=""
                 v-model="passportTypeText"
                 @focus="isDropdownPassTypeOpen=true"
+                required
               />
               <div class="triangle"></div>
             </div>
@@ -282,6 +306,7 @@
           v-model="isChanged"
         />
         <label for="radio-no" class="label-radio">Нет</label>
+
         <input
           type="radio"
           value="true"
@@ -290,8 +315,9 @@
           v-model="isChanged"
         />
         <label for="radio-yes" class="label-radio">Да</label>
+
       </div>
-      <div class="isChanged" v-show="isChanged === 'true'">
+      <div class="isChanged" v-if="isChanged === 'true'">
         <div class="string six">
           <!--      ++++++++++++++++++++++++-->
           <div class="input-wrapper second-name" style="width: 320px">
@@ -300,6 +326,8 @@
               class="myInput second-name"
               placeholder="Иванов"
               v-model="secondNameChanged"
+              pattern="^[А-Яа-яЁё\s]+$"
+              required
             />
           </div>
           <!--      ++++++++++++++++++++++++-->
@@ -309,12 +337,15 @@
               class="myInput first-name"
               placeholder="Иван"
               v-model="firstNameChanged"
+              pattern="^[А-Яа-яЁё\s]+$"
+              required
             />
           </div>
           <!--      ++++++++++++++++++++++++-->
         </div>
       </div>
     </div>
+
     <div
       v-show="firstName && secondName && patronymicName"
       style="display: flex; justify-content: space-between; align-items: center"
@@ -323,11 +354,9 @@
         Я, {{ secondName }} {{ firstName }} {{ patronymicName }} соглашаюсь
         отправить форму
       </div>
-
-      <input type="submit" @click="formSubmit" style="height: 30px" />
-
+      <button style="height: 30px">Отправить</button>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -345,10 +374,6 @@ export default {
       citizenshipsData: [],
       filteredCitizenship:[],
       passportTypesData:[],
-      citizenshipsArr:[
-        {country:"Россия"},
-        {country:"Другое"},
-      ],
       submitDataRus:{},
       submitDataInt:{},
       firstName: "",
@@ -360,7 +385,7 @@ export default {
       patronymicName: "",
       birthdayText: "",
       emailText: "",
-      citizenshipText: "Россия",
+      citizenshipText: "Russia",
       passportSerial: "",
       passportNumber: "",
       passportNumberLatin: "",
@@ -370,8 +395,8 @@ export default {
       sexText: "",
       isChanged: "false",
       isDropdownPassTypeOpen: false,
-      isDropdownCountryGetOpen:false,
-      isDropdownCitizenshipOpen:false,
+      isDropdownCountryGetOpen: false,
+      isDropdownCitizenshipOpen: false,
       debouncedSearch: null,
     };
   },
@@ -381,6 +406,8 @@ export default {
   mounted() {
     this.citizenshipsData = citizenships;
     this.passportTypesData = passportTypes;
+    this.filteredCitizenship = this.citizenshipsData;
+    this.sexText = "Мужской";
   },
   methods: {
     hideDropdownPassType(){
@@ -401,15 +428,8 @@ export default {
       this.isDropdownCountryGetOpen = false;
     },
     clickHandlerOnCitizenship(citizenship){
-      if(citizenship){
-        this.citizenshipText = citizenship.nationality;
-        this.countryGet = citizenship.flag;
-      }
-      else {
-        this.citizenshipText = "";
-        let el = this.$refs.citizenship;
-        el.focus();
-      };
+      this.citizenshipText = citizenship.nationality;
+      this.countryGet = citizenship.flag;
       this.isDropdownCitizenshipOpen = false;
     },
     inputCitizenshipHandler(citizenshipText){
