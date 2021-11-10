@@ -112,16 +112,19 @@
             @focus="isDropdownCitizenshipOpen=true"
             ref="citizenship"
             style="border: 0px; margin: 0"
+            @input="inputCitizenshipHandler(citizenshipText)"
           />
           <div class="triangle"></div>
+
         </div>
+
         <div
           class="dropdown"
           v-if="isDropdownCitizenshipOpen"
         >
           <ul class="dropdown-content">
             <li
-              v-for="citizenship in citizenshipsData"
+              v-for="citizenship in filteredCitizenship"
               :key="citizenship.id"
               class="li-in-content"
               @click="clickHandlerOnCitizenship(citizenship)"
@@ -330,6 +333,7 @@
 <script>
 import citizenships from "@/assets/data/citizenships.json";
 import passportTypes from "@/assets/data/passport-types.json";
+import {debounce} from "@/helpers/debounce";
 import ClickOutside from "vue-click-outside";
 
 export default {
@@ -339,6 +343,7 @@ export default {
   data() {
     return {
       citizenshipsData: [],
+      filteredCitizenship:[],
       passportTypesData:[],
       citizenshipsArr:[
         {country:"Россия"},
@@ -367,7 +372,11 @@ export default {
       isDropdownPassTypeOpen: false,
       isDropdownCountryGetOpen:false,
       isDropdownCitizenshipOpen:false,
+      debouncedSearch: null,
     };
+  },
+  created() {
+    this.debouncedSearch = debounce(this.filterCitizenships,500);
   },
   mounted() {
     this.citizenshipsData = citizenships;
@@ -403,10 +412,30 @@ export default {
       };
       this.isDropdownCitizenshipOpen = false;
     },
+    inputCitizenshipHandler(citizenshipText){
+
+      //this.filterCitizenships(citizenshipText);
+
+      this.debouncedSearch(citizenshipText);
+
+      this.isDropdownCitizenshipOpen = true;
+    },
+    filterCitizenships(element){
+      console.log("Searching " + element + " in citizenships...")
+
+      // this.filteredCitizenship = citizenshipData.map(el => {
+      //   if ((element === el.nationality)||(el.nationality.includes(element))) {
+      //     return el;
+      //   }else return "";
+      // })
+
+      this.filteredCitizenship = this.citizenshipsData.filter(el => (element === el.nationality)||(el.nationality.includes(element)))
+
+      //console.log(this.filteredCitizenship);
+    },
     formSubmit: function() {
       let json;
       if (this.citizenshipText === "Россия" || this.citizenshipText === "Russia") {
-        console.log("rus");
         this.submitDataRus = {
           firstname: this.firstName,
           lastname: this.secondName,
@@ -429,7 +458,6 @@ export default {
 
         json = JSON.stringify(this.submitDataRus);
       } else {
-        console.log("else");
         this.submitDataInt = {
           firstname: this.firstName,
           lastname: this.secondName,
@@ -456,7 +484,9 @@ export default {
       console.log(json);
     }
   },
-  computed: {},
+  computed: {
+
+  },
 };
 </script>
 
