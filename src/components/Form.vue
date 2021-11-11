@@ -1,4 +1,5 @@
 <template>
+<!--  .prevent -->
   <form
     class="form"
     @submit.prevent="formSubmit"
@@ -51,10 +52,12 @@
         >
           Дата рождения
           <input
-            class="myInput birthday"
-            placeholder="дд.мм.гггг"
+            class="myInput date birthday"
+            type="date"
             v-model="birthdayText"
-            pattern="^([0-9]{0,2}).([0-9]{0,2}).([0-9]{0,4})$"
+            value="2018-07-22"
+            min="1945-01-01"
+            :max="maxDate"
             required
           />
         </div>
@@ -124,9 +127,11 @@
             ref="citizenship"
             style="border: 0px; margin: 0"
             @input="inputCitizenshipHandler(citizenshipText)"
+            placeholder="Гражданство"
             required
           />
           <div class="triangle"></div>
+
         </div>
 
         <div
@@ -173,10 +178,12 @@
         <div class="passport get-date">
           Дата выдачи
           <input
-            class="myInput dateGet"
-            placeholder="дд.мм.гггг"
+            class="myInput date dateGet"
+            type="date"
             v-model="dateGet"
-            pattern="^([0-9]{0,2}).([0-9]{0,2}).([0-9]{0,4})$"
+            value="2018-07-22"
+            min="1945-01-01"
+            :max="maxDate"
             required
           />
         </div>
@@ -210,7 +217,7 @@
             Passport number
             <input
               class="myInput passSerialLatin"
-              placeholder=""
+              placeholder="1234567890"
               v-model="passportNumberLatin"
               pattern="^[0-9]+$"
               required
@@ -225,7 +232,7 @@
             >
               <input
                 class="myInput dropdown countryGet"
-                placeholder=""
+                placeholder="Country"
                 v-model="countryGet"
                 @focus="isDropdownCountryGetOpen = true"
                 required
@@ -263,7 +270,7 @@
             >
               <input
                 class="myInput dropdown passType"
-                placeholder=""
+                placeholder="Type"
                 v-model="passportTypeText"
                 @focus="isDropdownPassTypeOpen=true"
                 required
@@ -346,15 +353,19 @@
       </div>
     </div>
 
-    <div
-      v-show="firstName && secondName && patronymicName"
-      style="display: flex; justify-content: space-between; align-items: center"
-    >
-      <div style="margin-right: 20px">
-        Я, {{ secondName }} {{ firstName }} {{ patronymicName }} соглашаюсь
-        отправить форму
-      </div>
-      <button style="height: 30px">Отправить</button>
+<!--    <div-->
+<!--      v-show="firstName && secondName && patronymicName"-->
+<!--      style="display: flex; justify-content: space-between; align-items: center"-->
+<!--    >-->
+<!--      <div style="margin-right: 20px">-->
+<!--        Я, {{ secondName }} {{ firstName }} {{ patronymicName }} соглашаюсь-->
+<!--        отправить форму-->
+<!--      </div>-->
+<!--      <button style="height: 30px">Отправить</button>-->
+<!--    </div>-->
+    <div style="display: flex;justify-content: center; align-items: center; flex-direction: column">
+      <div v-if="ifSubmited" class="ifSubmited" style="margin-bottom: 10px;min-height: 20px"> {{ifSubmited}}</div>
+      <button class="c-button" style="height: 30px;max-width: fit-content">Отправить</button>
     </div>
   </form>
 </template>
@@ -385,7 +396,7 @@ export default {
       patronymicName: "",
       birthdayText: "",
       emailText: "",
-      citizenshipText: "Russia",
+      citizenshipText: "",
       passportSerial: "",
       passportNumber: "",
       passportNumberLatin: "",
@@ -394,6 +405,11 @@ export default {
       dateGet: "",
       sexText: "",
       isChanged: "false",
+      ifSubmited: "",
+      maxYear:null,
+      maxMonth:null,
+      maxDay:null,
+      maxDate:"",
       isDropdownPassTypeOpen: false,
       isDropdownCountryGetOpen: false,
       isDropdownCitizenshipOpen: false,
@@ -402,6 +418,12 @@ export default {
   },
   created() {
     this.debouncedSearch = debounce(this.filterCitizenships,500);
+    const Data = new Date();
+    this.maxYear = Data.getFullYear();
+    this.maxMonth = Data.getMonth() + 1;
+    this.maxDay = Data.getDate();
+    this.maxDate = `${this.maxYear}-${this.maxMonth}-${this.maxDay}`;
+
   },
   mounted() {
     this.citizenshipsData = citizenships;
@@ -502,6 +524,7 @@ export default {
         json = JSON.stringify(this.submitDataInt);
       }
       console.log(json);
+      this.ifSubmited="Отправлено! / Send!";
     }
   },
   computed: {
@@ -514,14 +537,14 @@ export default {
 .form {
   box-sizing: border-box;
   background: #f9f9f9;
-  border: 1px solid #aeb7e6;
+  border: 1px solid #d5d5d5;
   border-radius: 6px;
   padding: 20px;
   width: 700px;
   height: fit-content;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0px 0px 25px 6px rgba(0, 23, 191, 0.1);
+  box-shadow: 0px 0px 25px 6px rgba(145, 145, 145, 0.3);
 }
 
 .string {
@@ -553,18 +576,23 @@ input {
   align-items: center;
   border: 2px solid #cecece;
   width: auto;
+  height: 31px;
   border-radius: 6px;
   justify-content: space-between;
   margin-bottom: 5px;
   margin-top: 10px;
-  background: white;
+  background: #cacaca;
 }
 .string.four{
   margin-top: 5px;
 }
+.myInput::placeholder{
+  color: #d7d7d7;
+}
 .myInput.dropdown{
   width: 100%;
-  border: 0px;
+  border: none;
+  border-radius: 4px;
 }
 .myInput.dropdown:focus{
   outline: none
@@ -618,7 +646,7 @@ h3 {
 }
 .li-in-content{
   box-shadow: 0px 0px 5px 1px rgba(0, 23, 191, 0.1);
-  border: 1px solid #aeb7e6;
+  border: 1px solid #d7d7d7;
   background: white;
   border-radius: 6px;
   padding-left: 5px;
@@ -641,11 +669,65 @@ h3 {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 10px solid #bebebe;
-  margin-right: 5px;
+  border-top: 8px solid #f4f4f4;
+  border-radius: 3px;
+  margin-right: 3px;
+  margin-left: 3px;
+  z-index: 1;
+}
+.c-button {
+  appearance: none;
+  border: 0;
+  border-radius: 5px;
+  background: #929292;
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 16px;
+}
+.c-button:hover {
+  background: #585858;
+}
+.c-button:focus {
+  /*outline: 1px solid white;*/
+  /*box-shadow: 0 0 0 4px #929292;*/
+  background: white;
+  color: black;
 }
 .triangle:hover{
   cursor: pointer;
+}
+.myInput:valid{
+  background: #eeffee;
+}
+.myInput:invalid{
+  background: #ffe3e3;
+}
+.myInput:placeholder-shown{
+  background: white;
+}
+.myInput.date{
+  font-family: "Roboto", sans-serif;
+  color: #d7d7d7;
+  background: white;
+  height: 31px;
+}
+::-webkit-calendar-picker-indicator {
+  width: 0;
+  height: 0;
+  padding: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 8px solid #c3c3c3;
+  border-radius: 3px;
+  margin-right: 5px;
+}
+
+.myInput.date:valid{
+  color: black;
+  background: #eeffee;
+}
+.myInput.date:invalid{
+  outline-color: #ff9b9b;
 }
 
 </style>
