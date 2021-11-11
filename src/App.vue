@@ -10,24 +10,27 @@ import Form from "./components/Form.vue";
 export default {
   name: "App",
   components: {
-    Form,
-  },
+    Form
+  }
 };
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  color: #2c3e50;
-  background-color: #fafafa;
+  font-family: "Roboto", sans-serif;
+  color: #2a2a2a;
   padding: 24px;
   box-sizing: border-box;
 }
 
 html,
-body,
+body {
+  font-size: 18px;
+}
+
 #app {
   height: 100%;
+  align-items: center;
 }
 
 * {
